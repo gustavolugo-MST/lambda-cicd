@@ -1,0 +1,38 @@
+
+name: Deploy AWS Lambda
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lambda/**'
+
+jobs: # name of our job
+  deploy-lambda:
+    runs-on: ubuntu-latest #Sets or specificies the runner
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python # Sets up our Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies # Installs any Packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r lambda/requirements.txt -t lambda/
+
+      - name: Configure AWS credentials # Sets up our AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-1
+
+      - name: Deploy Lambda function # Zips lambda directory and updates lambda function
+        run: |
+          cd lambda
+          zip -r lambda.zip .
+          aws lambda update-function-code --function-name my-test-CICD-Lambda --zip-file fileb://lambda.zip
