@@ -1,6 +1,6 @@
 # Project name: lambda-cicd
 
-!Architecture
+![Architecture diagram](docs/architecture.png)
 
 ## The problem
 All enterprises have a common challenge, system bugs quickly can disable or break a business site. More specifically, it's software engineers that need to deal with these software bugs that can create havoc in day to day business operations. Instead of deploying new code manually, where a simple typo or nesting issue creates a new bug, a github actions workflow automates the (CICD) Continuous Integration and Continuous Deployment Process and verifies code at github pull. This automation alerts software engineers to correct bugs before deployment can happen.
