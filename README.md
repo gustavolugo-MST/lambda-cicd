@@ -3,10 +3,10 @@
 !Architecture
 
 ## The problem
-All enterprises have a common challenge, system bugs quickly can disable or break a business site. More specifically, it's software engineers that need to deal with these software bugs that can create havoc in day to day business operations. Instead of deploying new code manually, where a simple typo or nesting issue creates a new bug, a github actions workflow automates the (CICD) Continuous Integration and Continuous Deployment Process and verifies code at a pull request. This automation alerts software engineers to correct bugs before deployment can happen.
+All enterprises have a common challenge, system bugs quickly can disable or break a business site. More specifically, it's software engineers that need to deal with these software bugs that can create havoc in day to day business operations. Instead of deploying new code manually, where a simple typo or nesting issue creates a new bug, a github actions workflow automates the (CICD) Continuous Integration and Continuous Deployment Process and verifies code at github pull. This automation alerts software engineers to correct bugs before deployment can happen.
 
 ## What I built
-I built a two github workflows. The first validates an AWS Cloudformation template, builds a temporary stack with an S3 Bucket on pull request and then the push workflow updates the Lambda funciton code on push request. The continues integration, during pull request,  and continuous deployment, during push request,  provides an efficient CICD process. Finally, the S3 bucket that was created for this test environment is deleted on merge.
+I built a two github workflows. The first validates an AWS Cloudformation template, builds a temporary stack with an S3 Bucket on pull and then the push workflow updates the Lambda funciton code on push. The continous integration, during pull, and continuous deployment, during push, provides an efficient CICD process. Finally, the S3 bucket that was created for this test environment is deleted on merge.
 
 ## Decisions I made
 - I choose lambda for cost and efficiency. AWS Lambda only works when its enabled and that saves an organization money. This is way more efficient than having a dedicated server running 24 hours a day. 
