@@ -24,5 +24,5 @@ Now, when a developer opens a pull request, the template is validated and tested
 3. To see the validation workflow run, open a pull request that changes a file in the cloudformation folder.
 
 ## Links
-(Loom)
-(Medium)
+- [Medium write-up](https://medium.com/@gustavo.lugo2025/test-the-recipe-before-you-serve-it-1b7a71404e80)
+- [Youtube Video]
