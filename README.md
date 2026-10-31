@@ -3,24 +3,26 @@
 ![Architecture diagram](docs/architecture.png)
 
 ## The problem
-All enterprises have a common challenge, system bugs quickly can disable or break a business site. More specifically, it's software engineers that need to deal with these software bugs that can create havoc in day to day business operations. Instead of deploying new code manually, where a simple typo or nesting issue creates a new bug, a github actions workflow automates the (CICD) Continuous Integration and Continuous Deployment Process and verifies code at github pull. This automation alerts software engineers to correct bugs before deployment can happen.
+All enterprises have a common challenge; code bugs can quickly disable or break a business site. More specifically, it's software engineers that need to deal with these software bugs that can create havoc in day to day business operations. Instead of deploying new code manually, where a simple typo or nesting issue creates a new bug, a GitHub Actions workflow automates the Continuous Integration and Continuous Deployment (CICD) process and verifies code at a GitHub pull request. This automation alerts software engineers to correct bugs before deployment can happen.
 
 ## What I built
-I built a two github workflows. The first validates an AWS Cloudformation template, builds a temporary stack with an S3 Bucket on pull and then the push workflow updates the Lambda funciton code on push. The continous integration, during pull, and continuous deployment, during push, provides an efficient CICD process. Finally, the S3 bucket that was created for this test environment is deleted on merge.
+I built two GitHub workflows. The first validates an AWS CloudFormation template, builds a temporary stack with an S3 bucket on a pull request and then the push workflow updates the Lambda function code on push. The continuous integration, during a pull request, and continuous deployment, during a push, provides an efficient CICD process. Finally, the S3 bucket that was created for this test environment is deleted on merge.
 
 ## Decisions I made
-- I choose lambda for cost and efficiency. AWS Lambda only works when its enabled and that saves an organization money. This is way more efficient than having a dedicated server running 24 hours a day. 
-- I choose AWS Cloudformation because it serves as a code template. Build it once and it can redeploy every time its needed. Again efficiency is key.
-- We are in an AWS environment so these services make sense. 
+I chose to name each test stack with the pull request number instead of a fixed name, because two open pull requests never share the same name and the workflow knows which stack to delete as the name includes the pull request number. I chose to validate the template before creating the stack, instead of deploying first, because CloudFormation would create a failed or half-built stack that someone has to find and delete.
+
 
 ## What broke and how I fixed it
-I made a nesting mistake. AWS reads code in a very specific way. Once i indented a bit more my instructions were in line with how aws reads code. That fix enabled aws to deploy a S3 Bucket that was attached to this project. 
+The Lambda deploy workflow failed at the Deploy Lambda Function step with a ResourceNotFoundException error. The problem was that the function name in the workflow, my-test-CICD-Lambda, didn’t match the function name in AWS, my-test-cicd-lambda, because AWS names are case sensitive. I found it by reading the error in the Actions log and comparing it to lambda-deploy.yaml code, and I fixed it by removing the capitalization.
 
 ## Result
-What this architecture does now versus what a manual version would do is automate the process. So instead of uploading code to AWS to correct a bug, the github actions workflow now checks the code on pull request to validate the code efficacy then once it shows that it is written correctly, it will upload to the AWS stack and deploy. This is a massive advancement from manually uploaded code without testing it to later find out that something was wrong. You added another bug and now the site is additionally not working well. 
+Now, when a developer opens a pull request, the template is validated and tested in about 16 seconds, with no manual steps. When code is pushed to main, the Lambda function updates in about 12 seconds. Before this, a developer would have had to validate by hand, which takes ~1 hour and risks adding bugs.
 
 ## How to run it
-```bash
-git clone https://github.com/[you]/[repo].git
-cd [repo]
-terraform init && terraform apply
+1. In GitHub, go to Repo → Settings → Secrets and variables → Actions → New repository secret. Create two secrets named exactly AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY, matching what the workflows read.
+2. Before the deploy workflow can work, a Lambda function named my-test-cicd-lambda must already exist in the us-west-1 region.
+3. To see the validation workflow run, open a pull request that changes a file in the cloudformation folder.
+
+## Links
+(Loom)
+(Medium)
